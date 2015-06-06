@@ -1,0 +1,40 @@
+---
+- name: Deploy RabbitMQ
+  hosts: all
+  sudo: yes
+  tasks:
+  - name: Check if deps exists
+    stat: path=/vagrant/deps
+    register: deps_exists
+
+  - name: Create deps Directory
+    file: path=/vagrant/deps state=directory
+    when: deps_exists.stat.exists == False
+
+  - name: Install EPEL Repository
+    yum: name=epel-release state=latest
+
+  - name: Install Erlang
+    yum: name=erlang state=latest
+
+  - name: Check if RabbitMQ RPM exists
+    stat: path=/vagrant/deps/rabbitmq-server-3.5.3-1.noarch.rpm
+    register: rabbitmq_rpm
+    
+  - name: Download Couchbase RPM
+    get_url: url=https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.3/rabbitmq-server-3.5.3-1.noarch.rpm dest=/vagrant/deps/
+    when: rabbitmq_rpm.stat.exists == False
+            
+  - name: Install RabbitMQ RPM
+    yum: name=/vagrant/deps/rabbitmq-server-3.5.3-1.noarch.rpm state=present
+
+# Below steps are for running RabbitMQ tutorials
+
+  - name: Install pip
+    yum: name=python-pip state=latest
+
+  - name: Install git-core
+    yum: name=git-core state=latest
+
+  - name: Install pika
+    pip: name=pika version=0.9.8
