@@ -21,7 +21,7 @@
     stat: path=/vagrant/deps/rabbitmq-server-3.5.3-1.noarch.rpm
     register: rabbitmq_rpm
     
-  - name: Download Couchbase RPM
+  - name: Download RabbitMQ RPM
     get_url: url=https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.3/rabbitmq-server-3.5.3-1.noarch.rpm dest=/vagrant/deps/
     when: rabbitmq_rpm.stat.exists == False
             
