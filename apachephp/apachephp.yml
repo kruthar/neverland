@@ -1,0 +1,31 @@
+---
+- name: Install Apache Webserver and PHP5
+  hosts: all
+  sudo: yes
+  tasks:
+  - name: Install selinux-python bindings
+    yum: name=libselinux-python state=latest
+
+  - name: Disable SELinux
+    selinux: state=disabled
+
+  - name: Disable iptables
+    service: name=iptables state=stopped
+
+  - name: Install Apache systems
+    yum: name={{item}} state=latest
+    with_items:
+    - httpd
+    - mod_ssl
+
+  - name: Update Apache ServerName
+    replace: dest=/etc/httpd/conf/httpd.conf regexp='#ServerName www.example.com:80' replace='ServerName {{host}}'
+
+  - name: Install PHP and modules
+    yum: name={{item}} state=latest
+    with_items:
+    - php
+    - php-devel
+
+  - name: Start Apache
+    service: name=httpd state=started
