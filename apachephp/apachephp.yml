@@ -26,6 +26,10 @@
     with_items:
     - php
     - php-devel
+    - php-mysql
+
+  - name: Open permissions to /var/www/html
+    file: path=/var/www/html state=directory recurse=yes mode=777
 
   - name: Start Apache
     service: name=httpd state=started
