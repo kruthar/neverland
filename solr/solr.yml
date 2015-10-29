@@ -1,0 +1,44 @@
+---
+- name: Install Lucidworks Fusion
+  hosts: all
+  sudo: yes
+  vars:
+    solr_repository: http://archive.apache.org/dist/lucene/solr/5.3.1/
+    solr_tar: solr-5.3.1.tgz
+  tasks:
+  - name: Check if deps exists
+    stat: path=/vagrant/deps
+    register: deps
+
+  - name: Create deps Directory
+    file: path=/vagrant/deps state=directory
+    when: deps.stat.exists == False
+
+  - name: Check if Solr TAR exists
+    stat: path=/vagrant/deps/{{ solr_tar | quote }}
+    register: tar
+
+  - name: Download Solr TAR
+    get_url: url={{ solr_repository | quote }}/{{ solr_tar | quote }} dest=/vagrant/deps/
+    when: tar.stat.exists == False
+
+  - name: Install selinux-python bindings
+    yum: name=libselinux-python state=latest
+
+  - name: Disable SELinux
+    selinux: state=disabled
+
+  - name: Disable iptables
+    service: name=iptables state=stopped
+
+  - name: Install dependencies
+    yum: name={{ item }} state=latest
+    with_items:
+    - java-1.8.0-openjdk.x86_64
+    - unzip
+
+  - name: Unzip packages
+    unarchive: src=/vagrant/deps/{{ solr_tar }} dest=/opt/ copy=no
+
+  - name: Start Solr
+    command: /opt/solr-5.3.1/bin/solr start -e cloud -noprompt
