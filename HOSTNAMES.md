@@ -13,9 +13,14 @@ rabbit.vagrant		192.168.56.21
 lamp.vagrant		192.168.56.30
 apache.vagrant		192.168.56.31
 mysql.vagrant		192.168.56.32
+postgres.vagrant	192.168.56.33
 
 # NoSQL
 couchbase.vagrant	192.168.56.40
+cassandra.vagrant	192.168.56.41
 
 # Search
 solr.vagrant		192.168.56.50
+
+# Big Data
+spark.vagrant		192.168.56.60
