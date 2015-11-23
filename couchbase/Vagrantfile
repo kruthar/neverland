@@ -1,6 +1,10 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
+name = "couchbase"
+ip = "192.168.56.40"
+playbook = "couchbase.yml"
+
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
 
@@ -15,18 +19,22 @@ Vagrant.configure(2) do |config|
     config.cache.scope = :machine
   end
 
-  config.vm.define "couchbase.vagrant" do |vmconfig|
+  config.vm.define name do |vmconfig|
     vmconfig.vm.box = "bento/centos-6.7"
     vmconfig.vm.provider "virtualbox" do |v|
-      v.memory = 1024
+      v.memory = 2048
       v.cpus = 4
     end
 
-    vmconfig.vm.hostname = "couchbase.vagrant"
-    vmconfig.vm.network :private_network, ip: "192.168.56.40"
+    vmconfig.vm.hostname = name + ".vagrant"
+    vmconfig.vm.network :private_network, ip: ip
 
-    vmconfig.vm.provision "couchbase", type: "ansible" do |ansible|
-      ansible.playbook = "couchbase.yml"
+    vmconfig.vm.provision "base", type: "ansible" do |ansible|
+      ansible.playbook = "../base.yml"
+    end
+
+    vmconfig.vm.provision name, type: "ansible" do |ansible|
+      ansible.playbook = playbook
     end
   end
 end

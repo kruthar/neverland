@@ -27,5 +27,11 @@ Environments
 ## Apache & PHP
 A general purpose Apache webserver with PHP installed: https://github.com/kruthar/neverland/tree/master/apachephp
 
+## Cassandra
+A single node instance of Datastax Distro Cassandra: https://github.com/kruthar/neverland/tree/master/cassandra
+
+## Couchbase
+A single node Couchbase 4 server with data, index, and query services installed: https://github.com/kruthar/neverland/tree/master/couchbase
+
 ## RabbitMQ
 under construction

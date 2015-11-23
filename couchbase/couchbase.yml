@@ -2,25 +2,20 @@
 - name: Base Install Couchbase
   hosts: all
   sudo: yes
+  vars:
+    couchbase_repository: http://packages.couchbase.com/releases/4.0.0
+    couchbase_rpm: couchbase-server-enterprise-4.0.0-centos6.x86_64.rpm
   tasks:
-  - name: Check if deps exists
-    stat: path=/vagrant/deps
-    register: deps_exists
-
-  - name: Create deps Directory
-    file: path=/vagrant/deps state=directory
-    when: deps_exists.stat.exists == False
-
   - name: Check if Couchbase RPM exists
-    stat: path=/vagrant/deps/couchbase-server-enterprise-4.0.0-beta-centos6.x86_64.rpm
-    register: couchbase_rpm
+    stat: path=/vagrant/deps/{{ couchbase_rpm | quote}}
+    register: rpm
     
   - name: Download Couchbase RPM
-    get_url: url=http://packages.couchbase.com/releases/4.0.0-beta/couchbase-server-enterprise-4.0.0-beta-centos6.x86_64.rpm dest=/vagrant/deps/
-    when: couchbase_rpm.stat.exists == False
+    get_url: url={{ couchbase_repository | quote }}/{{ couchbase_rpm | quote }} dest=/vagrant/deps/
+    when: rpm.stat.exists == False
             
   - name: Install Couchbase RPM
-    yum: name=/vagrant/deps/couchbase-server-enterprise-4.0.0-beta-centos6.x86_64.rpm state=present
+    yum: name=/vagrant/deps/{{ couchbase_rpm | quote }} state=present
 
   - name: Wait for Couchbase initilization
     wait_for: port=8091 delay=2
