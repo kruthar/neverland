@@ -3,15 +3,6 @@
   hosts: all
   sudo: yes
   tasks:
-  - name: Install selinux-python bindings
-    yum: name=libselinux-python state=latest
-
-  - name: Disable SELinux
-    selinux: state=disabled
-
-  - name: Disable iptables
-    service: name=iptables state=stopped
-
   - name: Install Apache systems
     yum: name={{item}} state=latest
     with_items:

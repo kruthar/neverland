@@ -1,6 +1,10 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
+name = "apache"
+ip = "192.168.56.31"
+playbook = "apachephp.yml"
+
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
 
@@ -15,20 +19,24 @@ Vagrant.configure(2) do |config|
     config.cache.scope = :machine
   end
 
-  config.vm.define "apache.vagrant" do |vmconfig|
+  config.vm.define name do |vmconfig|
     vmconfig.vm.box = "bento/centos-6.7"
     vmconfig.vm.provider "virtualbox" do |v|
-      v.memory = 1024
+      v.memory = 2048
       v.cpus = 4
     end
 
-    vmconfig.vm.hostname = "apache.vagrant"
-    vmconfig.vm.network :private_network, ip: "192.168.56.31"
+    vmconfig.vm.hostname = name + ".vagrant"
+    vmconfig.vm.network :private_network, ip: ip
 
-    vmconfig.vm.provision "ansible" do |ansible|
-      ansible.playbook = "apachephp.yml"
+    vmconfig.vm.provision "base", type: "ansible" do |ansible|
+      ansible.playbook = "../base.yml"
+    end
+
+    vmconfig.vm.provision name, type: "ansible" do |ansible|
+      ansible.playbook = playbook
       ansible.extra_vars= {
-        host: "apache.vagrant"
+        host: name + ".vagrant"
       }
     end
   end
