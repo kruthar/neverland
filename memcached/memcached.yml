@@ -1,0 +1,10 @@
+---
+- name: Install memcached
+  hosts: all
+  sudo: yes
+  tasks:
+  - name: Install memcached
+    yum: name=memcached state=latest
+
+  - name: Start memcached
+    service: name=memcached state=started

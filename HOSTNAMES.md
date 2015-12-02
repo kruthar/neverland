@@ -7,6 +7,7 @@ hostnames always map to the same IP address, even across projects.
 Also try to confirm to these loose categories if possible.
 
 # Data Movement
+nifi.vagrant		192.168.56.20
 rabbit.vagrant		192.168.56.21
 
 # Web
@@ -18,9 +19,11 @@ postgres.vagrant	192.168.56.33
 # NoSQL
 couchbase.vagrant	192.168.56.40
 cassandra.vagrant	192.168.56.41
+memcached.vagrant	192.168.56.42
 
 # Search
 solr.vagrant		192.168.56.50
+fusion.vagrant		192.168.56.51
 
 # Big Data
 spark.vagrant		192.168.56.60
