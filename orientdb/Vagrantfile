@@ -1,9 +1,9 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-name = "fusion"
-ip = "192.168.56.51"
-playbook = "fusion.yml"
+name = "orientdb"
+ip = "192.168.56.44"
+playbook = "orientdb.yml"
 
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
     vmconfig.vm.box = "bento/centos-6.7"
     vmconfig.vm.provider "virtualbox" do |v|
       v.memory = 2048
-      v.cpus = 4
+      v.cpus = 2
     end
 
     vmconfig.vm.hostname = name + ".vagrant"

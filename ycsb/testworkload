@@ -1,0 +1,39 @@
+operationcount=100
+recordcount=100
+fieldcount=3
+fieldlength=20
+dataintegrity=true
+writeallfields=false
+readallfields=false
+insertorder=ordered
+maxscanlength=100
+threadcount=1
+workload=com.yahoo.ycsb.workloads.CoreWorkload
+
+scanproportion=0.2
+readproportion=0.3
+updateproportion=0.5
+insertproportion=0.0
+
+hdrhistogram.percentiles=50,75,95
+
+# mysql
+db.driver=com.mysql.jdbc.Driver
+db.url=jdbc:mysql://192.168.56.32:3306/ycsb
+#db.url=jdbc:mysql://ec2-52-27-128-246.us-west-2.compute.amazonaws.com/ycsb
+db.user=admin
+db.passwd=admin
+
+# cassandra
+hosts=192.168.56.41
+
+# couchbase
+couchbase.url=http://couchbase.vagrant:8091/pools
+couchbase.bucket=usertable
+
+# memcached
+memcached.hosts=192.168.56.42
+
+# orientdb
+orientdb.url=plocal:ycsb
+jvm_args="-Djava.awt.headless=true"

@@ -1,0 +1,24 @@
+---
+- name: Install mysql-connector.jar
+  hosts: all
+  sudo: yes
+  vars:
+    connector_repository: http://cdn.mysql.com//Downloads/Connector-J
+    connector_jar: mysql-connector-java-5.1.37.tar.gz
+  tasks:
+  - name: Check if connector jar exists
+    stat: path=/vagrant/deps{{ connector_jar | quote }}
+    register: jar
+
+  - name: Download Connector Jar
+    get_url: url={{ connector_repository | quote }}/{{ connector_jar | quote }} dest=/vagrant/deps/
+    when: jar.stat.exists == False
+
+  - name: Unpack Connector
+    unarchive: src=/vagrant/deps/{{ connector_jar | quote }} dest=/vagrant/deps/ copy=no
+
+  - name: Install mysql client
+    yum: name=mysql state=latest
+
+  - name: Run MySQL YCSB configure
+    shell: mysql -h 192.168.56.32 -u admin -padmin < /vagrant/mysql/configure_mysql.sql

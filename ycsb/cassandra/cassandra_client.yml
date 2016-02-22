@@ -1,0 +1,16 @@
+---
+- name: Install Cassandra client and configure ycsb keyspace
+  hosts: all
+  sudo: yes
+  tasks:
+  - name: Install argparse
+    easy_install: name=argparse
+
+  - name: Add Datastax repo file
+    copy: src=datastax.repo dest=/etc/yum.repos.d/datastax.repo
+
+  - name: Install Cassandra client
+    yum: name=cassandra20 state=latest
+
+  - name: Configure ycsb keyspace and column family
+    shell: cqlsh 192.168.56.41 -f /vagrant/cassandra/cassandra-setup-ycsb.cql

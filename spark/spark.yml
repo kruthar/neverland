@@ -1,0 +1,23 @@
+---
+- name: Base Install Spark
+  hosts: all
+  sudo: yes
+  vars:
+    spark_repository: http://d3kbcqa49mib13.cloudfront.net
+    spark_tar: spark-1.5.2-bin-hadoop2.6.tgz
+  tasks:
+  - name: Install dependencies
+    yum: name={{ item }} state=latest
+    with_items:
+    - java-1.7.0-openjdk.x86_64
+
+  - name: Check if Spark Tar exists
+    stat: path=/vagrant/deps/{{ spark_tar | quote }}
+    register: tar
+    
+  - name: Download Spark Tar
+    get_url: url={{ spark_repository | quote }}/{{ spark_tar | quote }} dest=/vagrant/deps/
+    when: tar.stat.exists == False
+            
+  - name: Unpack Spark
+    unarchive: src=/vagrant/deps/{{ spark_tar | quote }} dest=/opt/ copy=no

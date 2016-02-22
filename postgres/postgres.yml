@@ -1,0 +1,16 @@
+---
+- name: Install and start MySQL Server
+  hosts: all
+  sudo: yes
+  tasks:
+  - name: Install Postgres Server
+    yum: name={{ item }} state=present
+    with_items:
+    - postgresql-server
+    - postgresql-contrib
+
+  - name: Initialize Postgres
+    shell: service postgresql initdb
+
+  - name: Start Postgres
+    service: name=postgresql state=started

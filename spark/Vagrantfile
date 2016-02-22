@@ -1,9 +1,9 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-name = "fusion"
-ip = "192.168.56.51"
-playbook = "fusion.yml"
+name = "spark"
+ip = "192.168.56.60"
+playbook = "spark.yml"
 
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false

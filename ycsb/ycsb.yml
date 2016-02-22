@@ -1,0 +1,35 @@
+---
+- name: Install a YCSB client
+  hosts: all
+  sudo: yes
+  vars:
+    ycsb_repository: https://github.com/brianfrankcooper/YCSB/releases/download/0.5.0
+    ycsb_tar: ycsb-0.5.0.tar.gz
+#    ycsb_repository: https://github.com/brianfrankcooper/YCSB/archive
+#    ycsb_tar: 0.6.0-RC1.tar.gz
+
+  tasks:
+  - name: Check if deps exists
+    stat: path=/vagrant/deps
+    register: deps_exists
+
+  - name: Create deps Directory
+    file: path=/vagrant/deps state=directory
+    when: deps_exists.stat.exists == False
+
+  - name: Check if YCSB TAR exists
+    stat: path=/vagrant/deps/{{ ycsb_tar | quote }}
+    register: tar
+
+  - name: Download YCSB TAR
+    get_url: url={{ ycsb_repository | quote }}/{{ ycsb_tar | quote }} dest=/vagrant/deps/
+    when: tar.stat.exists == False
+
+  - name: Unpack YCSB TAR
+    unarchive: src=/vagrant/deps/{{ ycsb_tar | quote }} dest=/opt/ copy=no
+
+  - name: Install deps
+    yum: name={{ item }} state=present
+    with_items:
+    - java-1.8.0-openjdk.x86_64
+    - maven

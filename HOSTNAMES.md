@@ -6,6 +6,9 @@ hostnames always map to the same IP address, even across projects.
 
 Also try to confirm to these loose categories if possible.
 
+# Clients
+www.patheos.com		192.168.56.10
+
 # Data Movement
 nifi.vagrant		192.168.56.20
 rabbit.vagrant		192.168.56.21
@@ -20,6 +23,8 @@ postgres.vagrant	192.168.56.33
 couchbase.vagrant	192.168.56.40
 cassandra.vagrant	192.168.56.41
 memcached.vagrant	192.168.56.42
+mongodb.vagrant		192.168.56.43
+orientdb.vagrant	192.168.56.44
 
 # Search
 solr.vagrant		192.168.56.50
@@ -27,3 +32,6 @@ fusion.vagrant		192.168.56.51
 
 # Big Data
 spark.vagrant		192.168.56.60
+
+# DevOps
+docs.oneops.vagrant	192.168.56.70

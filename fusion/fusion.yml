@@ -2,25 +2,48 @@
 - name: Install Lucidworks Fusion
   hosts: all
   sudo: yes
+  vars:
+    fusion_repository: http://download.lucidworks.com
+    fusion_tar: fusion-2.1.1.tar.gz
   tasks:
-  - name: Install selinux-python bindings
-    yum: name=libselinux-python state=latest
-
-  - name: Disable SELinux
-    selinux: state=disabled
-
-  - name: Disable iptables
-    service: name=iptables state=stopped
-
   - name: Install dependencies
     yum: name={{ item }} state=latest
     with_items:
     - java-1.8.0-openjdk.x86_64
 
+#  - name: Install Python dependencies
+#    yum: name={{ item }} state=latest
+#    with_items:
+#    - zlib-devel
+#    - bzip2-devel
+#    - openssl-devel 
+#    - gcc
+
+##  - name: Download Python 2.7.9
+#    get_url: url=http://www.python.org/ftp/python/2.7.9/Python-2.7.9.tgz dest=/opt/
+
+#  - name: Unpack Python
+#    unarchive: src=/opt/Python-2.7.9.tgz dest=/opt/ copy=no
+
+#  - name: Compile and install Python
+#    command: '{{ item }} chdir="/opt/Python-2.7.9"'
+#    with_items:
+#    - "./configure --prefix=/usr/local"
+#    - "make"
+#    - "make altinstall"
+
+  - name: Check if Fusion TAR exists
+    stat: path=/vagrant/deps/{{ fusion_tar | quote}}
+    register: tar
+
+  - name: Download Fusion TAR
+    get_url: url={{ fusion_repository | quote }}/{{ fusion_tar | quote }} dest=/vagrant/deps/ validate_certs=no
+    when: tar.stat.exists == False
+    vars:
+      ansible_python_interpreter: /usr/local/bin/python2.7
+
   - name: Unzip packages
-    unarchive: src={{ item }} dest=/opt/
-    with_items:
-    - deps/fusion-2.1.0.tar.gz 
+    unarchive: src=/vagrant/deps/{{ fusion_tar | quote }} dest=/opt/
 
   - name: Start Fusion
     command: /opt/fusion/bin/fusion start

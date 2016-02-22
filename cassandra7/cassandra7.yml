@@ -1,0 +1,35 @@
+---
+- name: Base Install Cassandra
+  hosts: all
+  sudo: yes
+  vars:
+    ip: "{{ hostvars['cassandra']['ansible_eth1']['ipv4']['address'] }}"
+    cassandra_repository: http://archive.apache.org/dist/cassandra/0.7.0
+    cassandra_tar: apache-cassandra-0.7.0-bin.tar.gz
+  tasks:
+  - name: Install Dependencies
+    yum: name={{ item }} state=latest
+    with_items:
+    - java-1.7.0-openjdk.x86_64
+
+  - name: Check if Cassandra TAR exists
+    stat: path=/vagrant/deps/{{ cassandra_tar | quote }}
+    register: tar
+
+  - name: Download Cassandra TAR
+    get_url: url={{ cassandra_repository | quote }}/{{ cassandra_tar | quote }} dest=/vagrant/deps/
+    when: tar.stat.exists == False
+
+  - name: Unzip packages
+    unarchive: src=/vagrant/deps/{{ cassandra_tar }} dest=/opt/ copy=no
+
+#  - name: Update Cassandra configs
+#    replace: "dest=/etc/cassandra/conf/cassandra.yaml regexp='{{ item.regexp }}' replace='{{ item.replace }}' backup=no"
+#    with_items:
+#    - { regexp: "rpc_address: localhost", replace: "rpc_address: 0.0.0.0" }
+#    - { regexp: "# broadcast_rpc_address: 1.2.3.4", replace: "broadcast_rpc_address: {{ ip }}" }
+#    - { regexp: "listen_address: localhost", replace: "listen_address: {{ ip }}" }
+#    - { regexp: '(\s.*)- seeds: "127.0.0.1"', replace: '\1- seeds: "{{ ip }}"' }
+
+#  - name: Start Cassandra
+#    service: name=cassandra state=started

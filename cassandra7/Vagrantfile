@@ -1,9 +1,9 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-name = "fusion"
-ip = "192.168.56.51"
-playbook = "fusion.yml"
+name = "cassandra7"
+ip = "192.168.10.10"
+playbook = "cassandra7.yml"
 
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false

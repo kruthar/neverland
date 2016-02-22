@@ -4,6 +4,7 @@
   sudo: yes
   vars:
     ip: "{{ hostvars['cassandra']['ansible_eth1']['ipv4']['address'] }}"
+    version: cassandra20
   tasks:
   - name: Install Dependencies
     yum: name={{ item }} state=latest
@@ -17,7 +18,7 @@
     copy: src=datastax.repo dest=/etc/yum.repos.d/datastax.repo
 
   - name: Install Cassandra
-    yum: name=cassandra22 state=latest
+    yum: name={{ version }} state=latest
 
   - name: Update Cassandra configs
     replace: "dest=/etc/cassandra/conf/cassandra.yaml regexp='{{ item.regexp }}' replace='{{ item.replace }}' backup=no"

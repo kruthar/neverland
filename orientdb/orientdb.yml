@@ -1,0 +1,51 @@
+---
+- name: Install OrientDB 
+  hosts: all
+  sudo: yes
+  vars:
+    orientdb_repository: http://orientdb.com/download.php?file=
+    orientdb_tar: orientdb-community-2.1.2.tar.gz
+    orientdb_dir: orientdb-community-2.1.2
+#    orientdb_tar: orientdb-community-1.6.4.zip
+#    orientdb_dir: orientdb-community-1.6.4
+  tasks:
+  - name: Check if OrientDB TAR exists
+    stat: path=/vagrant/deps/{{ orientdb_tar | quote }}
+    register: tar
+
+  - name: Download OrientDB TAR
+    get_url: url={{ orientdb_repository | quote }}{{ orientdb_tar | quote }} dest=/vagrant/deps/ validate_certs=False
+    when: tar.stat.exists == False
+
+  - name: Install dependencies
+    yum: name={{ item }} state=latest
+    with_items:
+    - java-1.7.0-openjdk.x86_64
+    - unzip
+
+  - name: Unpack packages
+    unarchive: src=/vagrant/deps/{{ orientdb_tar }} dest=/opt/ copy=no
+
+  - name: Update config file
+    replace: dest='{{ item.dest }}' regexp='{{ item.regexp }}' replace='{{ item.replace }}'
+    with_items:
+    - {"dest": '/opt/{{ orientdb_dir }}/bin/orientdb.sh', "regexp": 'ORIENTDB_DIR="YOUR_ORIENTDB_INSTALLATION_PATH"', "replace": 'ORIENTDB_DIR="/opt/{{ orientdb_dir }}"'}
+    - {"dest": '/opt/{{ orientdb_dir }}/bin/orientdb.sh', "regexp": 'ORIENTDB_USER="USER_YOU_WANT_ORIENTDB_RUN_WITH"', "replace": 'ORIENTDB_USER="root"'}
+
+  - name: Add root user credentials
+    lineinfile: dest='/opt/{{ orientdb_dir }}/config/orientdb-server-config.xml' insertafter="\s*<users>" line='<user resources="*" password="password" name="root"/>'
+
+  - name: Update executable permissions
+    file: path='/opt/{{ orientdb_dir }}' mode=755 recurse=yes state=directory
+    
+  - name: Update config permissions
+    file: path='/opt/{{ orientdb_dir }}/config' mode=777
+
+  - name: Link service files
+    file: src={{ item.src }} dest={{ item.dest }} state=link
+    with_items:
+    - {"src": "/opt/{{ orientdb_dir }}/bin/orientdb.sh", "dest": "/etc/init.d/orientdb"}
+    - {"src": "/opt/{{ orientdb_dir }}/bin/console.sh", "dest": "/usr/bin/orientdb"}
+
+  - name: Start OrientDB
+    service: name=orientdb state=started
