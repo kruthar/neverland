@@ -1,0 +1,7 @@
+{
+	"views": {
+		"ycsb_view": {
+			"map": "function (doc, meta) {emit(meta.id, null);}"
+		}
+	}
+}
