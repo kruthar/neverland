@@ -25,6 +25,7 @@ cassandra.vagrant	192.168.56.41
 memcached.vagrant	192.168.56.42
 mongodb.vagrant		192.168.56.43
 orientdb.vagrant	192.168.56.44
+redis.vagrant		192.168.56.45
 
 # Search
 solr.vagrant		192.168.56.50

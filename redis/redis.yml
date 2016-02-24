@@ -1,0 +1,51 @@
+---
+- name: Install Redis and configure for port 6379
+  hosts: all
+  sudo: yes
+  vars:
+    repository: http://download.redis.io/releases
+    tar: redis-3.0.7.tar.gz
+    dir: redis-3.0.7
+  tasks:
+  - name: Check if deps exists
+    stat: path=/vagrant/deps
+    register: deps
+
+  - name: Create deps Directory
+    file: path=/vagrant/deps state=directory
+    when: deps.stat.exists == False
+
+  - name: Check if tar exists
+    stat: path=/vagrant/deps/{{ tar | quote }}
+    register: tar_exists
+
+  - name: Download tar
+    get_url: url={{ repository | quote }}/{{ tar | quote }} dest=/vagrant/deps/
+    when: tar_exists.stat.exists == False
+
+  - name: Unzip packages
+    unarchive: src=/vagrant/deps/{{ tar }} dest=/opt/ copy=no
+    
+  - name: Install development tools
+    yum: name="@Development tools" state=present
+
+  - name: Make Redis deps
+    command: make hiredis jemalloc linenoise lua chdir=/opt/{{ dir }}/deps
+
+  - name: Make Redis
+    command: make chdir=/opt/{{ dir }}
+
+  - name: Create service directories
+    file: path={{ item }} recurse=yes state=directory
+    with_items:
+    - /var/redis/6379
+    - /etc/redis
+
+  - name: copy executables
+    command: cp /opt/{{ dir }}/src/redis-server /opt/{{ dir }}/src/redis-cli /usr/local/bin
+
+  - name: copy scripts
+    copy: src={{ item.src }} dest={{ item.dest }} mode=755
+    with_items:
+    - { src: "redis_init_script", dest: "/etc/init.d/redis_6379" }
+    - { src: "redis.conf", dest: "/etc/redis/6379.conf" }
