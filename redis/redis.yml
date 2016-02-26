@@ -49,3 +49,6 @@
     with_items:
     - { src: "redis_init_script", dest: "/etc/init.d/redis_6379" }
     - { src: "redis.conf", dest: "/etc/redis/6379.conf" }
+
+  - name: start Redis service
+    service: name=redis_6379 state=started
