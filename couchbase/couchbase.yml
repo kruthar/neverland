@@ -1,7 +1,7 @@
 ---
 - name: Base Install Couchbase
   hosts: all
-  sudo: yes
+  become: yes
   vars:
     couchbase_repository: http://packages.couchbase.com/releases/4.0.0
     couchbase_rpm: couchbase-server-enterprise-4.0.0-centos6.x86_64.rpm

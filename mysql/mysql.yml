@@ -1,7 +1,7 @@
 ---
 - name: Install and start MySQL Server
   hosts: all
-  sudo: yes
+  become: yes
   tasks:
   - name: Install MySQL Server
     yum: name=mysql-server state=present
